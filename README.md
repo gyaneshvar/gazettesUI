@@ -1,17 +1,55 @@
-# React + Vite
+# 📊 Gazette Explorer Dashboard (gazettesUI)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The **Gazette Explorer** is a modern, high-performance dashboard designed to visualize regulatory changes in Indian government eGazettes. It transforms complex, bilingual PDF data into an intuitive interactive timeline.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
 
-## React Compiler
+- **Interactive Timeline**: View how product specifications (e.g., Nitrogen, Moisture, Composition) change across different gazette releases.
+- **Smart Diff Engine**: Automatically calculates and highlights increases (↑) or decreases (↓) in values compared to the previous gazette.
+- **Deep-Linking**: Supports `?product=` URL parameters. Clicking an automated email link will instantly select the relevant product and load its historical timeline.
+- **Responsive Glassmorphism UI**: A premium, dark-mode interface built with React, Vite, and Vanilla CSS.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# gazettesUI
+### Local Development
+1. Navigate to the UI directory:
+   ```bash
+   cd gazettesUI
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:5173/gazettesUI/](http://localhost:5173/gazettesUI/) in your browser.
+
+### Data Management
+The dashboard loads its data from a centralized CSV file:
+`public/data/master_seaweed_database.csv`
+
+The **GazetteAgent** (backend) automatically updates this file daily via the GitHub REST API.
+
+---
+
+## 🚢 Deployment
+
+This dashboard is configured for **Automated Continuous Deployment** via GitHub Actions.
+
+- **Trigger**: Every push to the `main` branch.
+- **Workflow**: `.github/workflows/deploy.yml`
+- **Host**: Deployed to **GitHub Pages**.
+- **Live URL**: `https://gyaneshvar.github.io/gazettesUI/`
+
+---
+
+## 🔒 Configuration
+
+- **Vite Base Path**: Configured as `/gazettesUI/` to ensure assets load correctly on GitHub Pages subpaths.
+- **Public Directory**: Contains the favicon and the primary CSV database.
