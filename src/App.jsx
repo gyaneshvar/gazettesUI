@@ -39,8 +39,16 @@ function App() {
             const uniqueProducts = [...new Set(parsedData.map(row => row.Product_Title))].filter(Boolean);
             setAvailableProducts(uniqueProducts);
             
-            if (!selectedProduct && uniqueProducts.length > 0) {
-              setSelectedProduct(uniqueProducts[0]);
+            // Auto-selection logic:
+            // 1. If we have a product from URL, try to find an EXACT match in the data
+            // 2. If no exact match (or no URL param), default to the first product
+            const urlProduct = getProductFromUrl();
+            const matchedProduct = uniqueProducts.find(p => p.trim() === urlProduct.trim());
+            
+            if (matchedProduct) {
+                setSelectedProduct(matchedProduct);
+            } else if (!selectedProduct && uniqueProducts.length > 0) {
+                setSelectedProduct(uniqueProducts[0]);
             }
             
             setLoading(false);
