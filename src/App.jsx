@@ -26,7 +26,8 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('./data/master_seaweed_database.csv');
+        const csvUrl = `${import.meta.env.BASE_URL}data/master_seaweed_database.csv?v=${Date.now()}`;
+        const response = await fetch(csvUrl, { cache: 'no-store' });
         const csvText = await response.text();
         
         Papa.parse(csvText, {
