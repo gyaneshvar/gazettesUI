@@ -144,43 +144,51 @@ function App() {
   const selectStyles = {
     control: (base, state) => ({
       ...base,
-      background: 'rgba(255,255,255,0.03)',
-      borderColor: state.isFocused ? '#a1a1aa' : 'rgba(255, 255, 255, 0.08)',
-      color: '#f4f4f5',
+      background: '#ffffff',
+      borderColor: state.isFocused ? 'var(--accent-blu)' : 'var(--glass-border)',
+      color: 'var(--text-main)',
       padding: '0.25rem 0.5rem',
-      borderRadius: '8px',
-      boxShadow: 'none',
+      borderRadius: '12px',
+      boxShadow: state.isFocused ? '0 0 0 4px var(--accent-blu-glow)' : '0 2px 8px rgba(0,0,0,0.02)',
       width: '100%',
       minWidth: '500px',
       fontFamily: 'Inter',
       cursor: 'pointer',
+      transition: 'all 0.2s',
       '&:hover': {
-        borderColor: '#a1a1aa'
+        borderColor: 'var(--accent-blu)'
       }
     }),
     menu: (base) => ({
       ...base,
-      background: '#18181b',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      borderRadius: '8px',
+      background: '#ffffff',
+      border: '1px solid var(--glass-border)',
+      borderRadius: '12px',
+      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)',
       overflow: 'hidden',
-      zIndex: 50
+      zIndex: 100
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isFocused ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-      color: state.isFocused ? '#60a5fa' : '#f4f4f5',
+      backgroundColor: state.isFocused ? 'var(--status-neutral-bg)' : 'transparent',
+      color: state.isFocused ? 'var(--accent-blu)' : 'var(--text-main)',
       cursor: 'pointer',
       fontFamily: 'Inter',
+      fontWeight: state.isSelected ? '600' : '400',
       padding: '0.75rem 1rem'
     }),
     singleValue: (base) => ({
       ...base,
-      color: '#f4f4f5'
+      color: 'var(--text-main)',
+      fontWeight: '500'
     }),
     input: (base) => ({
       ...base,
-      color: '#f4f4f5'
+      color: 'var(--text-main)'
+    }),
+    placeholder: (base) => ({
+      ...base,
+      color: 'var(--text-muted)'
     })
   };
 
@@ -262,6 +270,65 @@ function App() {
                         </span>
                       </div>
                     ))}
+                  </div>
+                );
+              })()}
+
+              {/* Dose & Application (Grouped by Crop - Robust Order-based) */}
+              {(() => {
+                const doseRows = data.filter(row => 
+                  row.Product_Title === selectedProduct && 
+                  row.Gazette_ID === gazette.id && 
+                  row.Category?.toLowerCase() === 'dose'
+                );
+                
+                if (doseRows.length === 0) return null;
+
+                // Group by pairing Crop and Dose rows as they appear
+                const groupedDoses = [];
+                let currentPair = null;
+
+                doseRows.forEach(row => {
+                  const key = row.Data_Key?.toLowerCase();
+                  
+                  // If we find a "Crop" key, it's the start of a new pair
+                  if (key === 'crop') {
+                    if (currentPair) groupedDoses.push(currentPair);
+                    currentPair = { crop: row.Data_Value, dose: "As per label" };
+                  } else if (key === 'dose' || key === 'dosage') {
+                    if (currentPair) {
+                        currentPair.dose = row.Data_Value;
+                    } else {
+                        // Fallback if Dose appears before a Crop row
+                        groupedDoses.push({ crop: "General", dose: row.Data_Value });
+                    }
+                  }
+                });
+                if (currentPair) groupedDoses.push(currentPair);
+
+                return (
+                  <div className="data-group">
+                    <details>
+                      <summary style={{ 
+                        cursor: 'pointer', 
+                        listStyle: 'none', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        outline: 'none'
+                      }}>
+                        <h3>Dose & Application</h3>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>▼ Click to expand</span>
+                      </summary>
+                      <div style={{ marginTop: '0.5rem' }}>
+                        {groupedDoses.map((pair, i) => (
+                          <div className="data-row" key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                            <span className="data-key" style={{ fontWeight: 600, color: 'var(--text-main)' }}>{pair.crop}</span>
+                            <span className="data-value" style={{ maxWidth: '60%', textAlign: 'right' }}>{pair.dose}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </details>
                   </div>
                 );
               })()}
